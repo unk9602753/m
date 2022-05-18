@@ -28,7 +28,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public void delete(long id) {
         int statement = giftCertificateDao.remove(id);
         if (statement == 0) {
-            throw new ServiceException("exception.delete.certificate",id);
+            System.out.println(statement);
+            throw new ServiceException("exception.delete.certificate", id);
         }
     }
 
@@ -48,13 +49,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     @Override
     public List<GiftCertificateDto> findAll() {
-        throw new UnsupportedOperationException("Unsupported method");
+        List<GiftCertificate> all = giftCertificateDao.findAll();
+        return mapToListOfDtos(all);
     }
 
     @Override
     public List<GiftCertificateDto> findByCriteriaAndSort(String searchCriteria, String searchName, String sortCriteria, String sortDirection) {
         List<GiftCertificate> giftCertificates = giftCertificateDao.findByCriteriaAndSort(searchCriteria, searchName, sortCriteria, sortDirection);
-        if(!giftCertificates.isEmpty()){
+        if (giftCertificates != null) {
             return mapToListOfDtos(giftCertificates);
         }
         throw new ServiceException("exception.incorrect.search.criteria", searchCriteria);
@@ -87,24 +89,23 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
             giftCertificateDao.removeTagToGiftCertificate(id);
             linkCertificateWithTags(tags, id);
         } else {
-            throw new ServiceException("exception.update.certificate",id);
+            throw new ServiceException("exception.update.certificate", id);
         }
     }
 
     private void linkCertificateWithTags(List<Tag> tags, long certificateId) {
-        if (tags != null) {
-            tags.forEach(t -> {
-                if (tagDao.findByName(t.getName()).isEmpty()) {
-                    tagDao.insert(t);
-                }
-                giftCertificateDao.addTagToGiftCertificate(certificateId, tagDao.findByName(t.getName()).get().getId());
-            });
-        }
+        if (tags == null) return;
+        tags.forEach(t -> {
+            if (tagDao.findByName(t.getName()).isEmpty()) {
+                tagDao.insert(t);
+            }
+            giftCertificateDao.addTagToGiftCertificate(certificateId, tagDao.findByName(t.getName()).get().getId());
+        });
     }
 
     private List<GiftCertificateDto> mapToListOfDtos(List<GiftCertificate> giftCertificates) {
         List<GiftCertificateDto> dtoList = new ArrayList<>();
-        if(giftCertificates != null){
+        if (giftCertificates != null) {
             giftCertificates.forEach(g -> {
                 GiftCertificateDto giftCertificateDto = new GiftCertificateDto(g);
                 List<Tag> allTagsByCertificateId = tagDao.findAllTagsByCertificateId(g.getId());

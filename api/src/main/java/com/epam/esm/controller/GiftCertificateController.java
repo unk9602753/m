@@ -1,6 +1,5 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.config.Translator;
 import com.epam.esm.entity.GiftCertificateDto;
 import com.epam.esm.service.GiftCertificateService;
 import lombok.RequiredArgsConstructor;
@@ -12,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/certificates")
+@RequestMapping("certificates")
 @RequiredArgsConstructor
 public class GiftCertificateController {
     private final GiftCertificateService giftCertificateService;
@@ -42,10 +41,11 @@ public class GiftCertificateController {
     }
 
     @GetMapping
-    public List<GiftCertificateDto> getSortedBySearch(@RequestParam(value = "sort_direction", required = false, defaultValue = "asc") String direction,
-                                                      @RequestParam(value = "sort_criteria", required = false) String criteria,
-                                                      @RequestParam(value = "search_criteria", required = false, defaultValue = "certificate") String searchCriteria,
-                                                      @RequestParam(value = "search_name", required = false, defaultValue = "") String name) {
+    @ResponseStatus(HttpStatus.OK)
+    public List<GiftCertificateDto> getAllCertificatesByCriteria(@RequestParam(value = "sort_direction", required = false, defaultValue = "asc") String direction,
+                                                                 @RequestParam(value = "sort_criteria", required = false) String criteria,
+                                                                 @RequestParam(value = "search_criteria", required = false, defaultValue = "certificate") String searchCriteria,
+                                                                 @RequestParam(value = "search_name", required = false, defaultValue = "") String name) {
         return giftCertificateService.findByCriteriaAndSort(searchCriteria,name,criteria,direction);
     }
 }

@@ -95,7 +95,7 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
         } else if (searchCriteria.equals("certificate")) {
             return jdbcTemplate.query(SELECT_BY_PART_OF_NAME + " ORDER BY " + sortCriteria + " " + sortDirection, new GiftCertificateRowMapper(), "%" + searchName + "%");
         }
-        return Collections.emptyList();
+        return null;
     }
 
     @Override

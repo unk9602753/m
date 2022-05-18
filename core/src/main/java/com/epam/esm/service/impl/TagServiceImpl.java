@@ -34,7 +34,7 @@ public class TagServiceImpl implements TagService {
     public void delete(long id) {
         int statement = tagDao.remove(id);
         if (statement == 0) {
-            throw new ServiceException("exception.delete.tag",id);
+            throw new ServiceException("exception.delete.tag", id);
         }
     }
 
@@ -42,11 +42,8 @@ public class TagServiceImpl implements TagService {
     @Transactional
     public void create(Tag tag) {
         boolean isTagExist = tagDao.findByName(tag.getName()).isPresent();
-        if (!isTagExist) {
-            tagDao.insert(tag);
-        } else {
-            throw new ServiceException("exception.create.tag");
-        }
+        if (!isTagExist) tagDao.insert(tag);
+        throw new ServiceException("exception.create.tag");
     }
 }
 
