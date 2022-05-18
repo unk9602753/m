@@ -1,12 +1,11 @@
 package com.epam.esm.entity;
 
-import com.epam.esm.config.IdDeserializer;
-import com.epam.esm.config.StringDeserializer;
+import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,12 +15,11 @@ import java.util.List;
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class GiftCertificateDto {
-    @JsonDeserialize(using = IdDeserializer.class)
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private long id;
-    @JsonDeserialize(using = StringDeserializer.class)
     private String name;
-    @JsonDeserialize(using = StringDeserializer.class)
     private String description;
     private double price;
     private int duration;

@@ -4,33 +4,35 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
+import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
+import org.springframework.core.io.support.ResourcePropertySource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 
 @Configuration
 @ComponentScan("com.epam.esm")
-@PropertySource("classpath:prod-connection.properties")
-@PropertySource("classpath:dev-connection.properties")
 public class DaoConfig {
-    private Environment environment;
+    private ConfigurableEnvironment environment;
 
     @Autowired
-    public DaoConfig(Environment environment) {
+    public DaoConfig(ConfigurableEnvironment environment) {
         this.environment = environment;
     }
 
     @Bean
     @Profile("dev")
-    public HikariConfig hikariConfig() {
+    public HikariConfig hikariConfig() throws IOException {
+        environment.getPropertySources().addFirst(new ResourcePropertySource("classpath:dev-connection.properties"));
         HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl(environment.getProperty("mysql.url"));
-        hikariConfig.setUsername(environment.getProperty("mysql.username"));
-        hikariConfig.setPassword(environment.getProperty("mysql.pw"));
-        hikariConfig.setDriverClassName(environment.getProperty("mysql.cn"));
-        hikariConfig.setMaximumPoolSize(Integer.parseInt(environment.getProperty("mysql.ps")));
+        hikariConfig.setJdbcUrl(environment.getProperty("url"));
+        hikariConfig.setUsername(environment.getProperty("username"));
+        hikariConfig.setPassword(environment.getProperty("pw"));
+        hikariConfig.setDriverClassName(environment.getProperty("cn"));
+        hikariConfig.setMaximumPoolSize(Integer.parseInt(environment.getProperty("ps")));
         return hikariConfig;
     }
 
@@ -42,12 +44,13 @@ public class DaoConfig {
 
     @Bean
     @Profile("prod")
-    public DataSource embeddedDataSource() {
+    public DataSource embeddedDataSource() throws IOException {
+        environment.getPropertySources().addFirst(new ResourcePropertySource("classpath:prod-connection.properties"));
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
-        dataSource.setUrl(environment.getProperty("h2.url"));
-        dataSource.setUsername(environment.getProperty("h2.username"));
-        dataSource.setPassword(environment.getProperty("h2.pw"));
-        dataSource.setDriverClassName(environment.getProperty("h2.cn"));
+        dataSource.setUrl(environment.getProperty("url"));
+        dataSource.setUsername(environment.getProperty("username"));
+        dataSource.setPassword(environment.getProperty("pw"));
+        dataSource.setDriverClassName(environment.getProperty("cn"));
         return dataSource;
     }
 
